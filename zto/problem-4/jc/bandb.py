@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from queue import PriorityQueue
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 OPTIMIZATION = Literal['min', 'max']
 INIT = Literal['none', 'rand', 'greedy', 'dfs']
@@ -14,8 +14,9 @@ class PrioritizedItem:
 
 
 class Solution(ABC):
-    def __init__(self, is_final: bool = False) -> None:
+    def __init__(self, value: int, is_final: bool = False) -> None:
         self.is_final = is_final
+        self.value = value
 
     @abstractmethod
     def __gt__(self, s2):
@@ -35,6 +36,10 @@ class Problem(ABC):
     def get_next_max(self):
         pass
 
+    @abstractmethod
+    def expand(self, solution: Optional[Solution] = None) -> list[Solution]:
+        pass
+
 
 class BranchAndBound:
     def __init__(self, optimization_type: OPTIMIZATION, init_type: INIT) -> None:
@@ -45,11 +50,14 @@ class BranchAndBound:
         self.best_solution = None
 
     def optimize(self, problem: Problem) -> Solution:
-        # TODO init best solution
-        # TODO expand first level
+        self._init_best()
+
+        solutions = problem.expand()
+        for solution in self._prune(solutions):
+            self._enqueue_solution(solution)
 
         while not self.queue.empty():
-            solution: Solution = self.queue.get()
+            solution: Solution = self.queue.get().item
 
             if solution.is_final:
                 if self.optimization_type == 'max':
@@ -59,6 +67,37 @@ class BranchAndBound:
                     if self.best_solution > solution:
                         self.best_solution = solution
             else:
-                pass  # TODO expand ,prune, add to queue
+                subsolutions = problem.expand(solution)
+                for new_solution in self._prune(subsolutions):
+                    self._enqueue_solution(new_solution)
 
         return self.best_solution
+
+    def _enqueue_solution(self, solution: Solution) -> None:
+        priority = (
+            -solution.value if self.optimization_type == 'max' else solution.value
+        )
+
+        self.queue.put(PrioritizedItem(priority, solution))
+
+    def _init_best(self) -> None:
+        # TODO
+        if self.init_type == 'rand':
+            pass
+        elif self.init_type == 'greedy':
+            pass
+        elif self.init_type == 'dfs':
+            pass
+
+    def _prune(self, solutions: list[Solution]) -> list[Solution]:
+        if self.best_solution is None:
+            return solutions
+
+        # NOTE is gt/lt better than ge/le ?
+        if self.optimization_type == 'max':
+            f = lambda s: s > self.best_solution
+        else:
+            f = lambda s: s < self.best_solution
+        f_solutions = filter(f, solutions)
+
+        return list(f_solutions)
