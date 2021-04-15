@@ -29,11 +29,15 @@ class Solution(ABC):
 
 class Problem(ABC):
     @abstractmethod
-    def get_next_min(self):
+    def get_rand_solution(self) -> Solution:
         pass
 
     @abstractmethod
-    def get_next_max(self):
+    def get_greedy_solution(self) -> Solution:
+        pass
+
+    @abstractmethod
+    def get_dfs_solution(self) -> Solution:
         pass
 
     @abstractmethod
@@ -50,7 +54,7 @@ class BranchAndBound:
         self.best_solution = None
 
     def optimize(self, problem: Problem) -> Solution:
-        self._init_best()
+        self._init_best_solution(problem)
 
         solutions = problem.expand()
         for solution in self._prune(solutions):
@@ -80,14 +84,13 @@ class BranchAndBound:
 
         self.queue.put(PrioritizedItem(priority, solution))
 
-    def _init_best(self) -> None:
-        # TODO
+    def _init_best_solution(self, problem: Problem) -> None:
         if self.init_type == 'rand':
-            pass
+            self.best_solution = problem.get_rand_solution()
         elif self.init_type == 'greedy':
-            pass
+            self.best_solution = problem.get_greedy_solution()
         elif self.init_type == 'dfs':
-            pass
+            self.best_solution = problem.get_dfs_solution()
 
     def _prune(self, solutions: list[Solution]) -> list[Solution]:
         if self.best_solution is None:
