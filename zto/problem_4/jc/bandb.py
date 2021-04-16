@@ -49,11 +49,13 @@ class BranchAndBound:
     def __init__(self, optimization_type: OPTIMIZATION, init_type: INIT) -> None:
         self.optimization_type = optimization_type
         self.init_type = init_type
-        self.queue = PriorityQueue()  # lower priority first
+        self.queue: PriorityQueue[
+            PrioritizedItem
+        ] = PriorityQueue()  # lower priority first
 
         self.best_solution = None
 
-    def optimize(self, problem: Problem) -> Solution:
+    def optimize(self, problem: Problem) -> Optional[Solution]:
         self._init_best_solution(problem)
 
         solutions = problem.expand()
