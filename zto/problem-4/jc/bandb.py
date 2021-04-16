@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from functools import total_ordering
 from queue import PriorityQueue
 from typing import Any, Literal, Optional
 
@@ -13,18 +14,17 @@ class PrioritizedItem:
     item: Any = field(compare=False)
 
 
+@total_ordering
 class Solution(ABC):
     def __init__(self, value: int, is_final: bool = False) -> None:
         self.is_final = is_final
         self.value = value
 
-    @abstractmethod
-    def __gt__(self, s2):
-        pass
+    def __gt__(self, other: 'Solution') -> bool:
+        return self.value > other.value
 
-    @abstractmethod
-    def __lt__(self, s2):
-        pass
+    def __eq__(self, other: 'Solution') -> bool:
+        return self.value == other.value
 
 
 class Problem(ABC):
