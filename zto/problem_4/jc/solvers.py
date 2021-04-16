@@ -122,9 +122,9 @@ class BranchAndBound(Solver):
 
 
 class BruteForce(Solver):
-    def __init__(self) -> None:
+    def __init__(self, optimization_type: OPTIMIZATION) -> None:
+        super().__init__(optimization_type)
         self.queue = []
-        self.best_solution = None
 
     def optimize(self, problem: Problem) -> Optional[Solution]:
         self.queue = problem.expand()
