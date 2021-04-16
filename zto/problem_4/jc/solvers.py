@@ -45,15 +45,33 @@ class Problem(ABC):
         pass
 
 
-class BranchAndBound:
-    def __init__(self, optimization_type: OPTIMIZATION, init_type: INIT) -> None:
+class Solver(ABC):
+    def __init__(self, optimization_type: OPTIMIZATION) -> None:
         self.optimization_type = optimization_type
+        self.best_solution = None
+
+    @abstractmethod
+    def optimize(self, problem: Problem) -> Optional[Solution]:
+        pass
+
+    def _update_best_solution(self, solution: Solution) -> None:
+        if self.best_solution is None:
+            self.best_solution = solution
+        elif self.optimization_type == 'max':
+            if self.best_solution < solution:
+                self.best_solution = solution
+        else:
+            if self.best_solution > solution:
+                self.best_solution = solution
+
+
+class BranchAndBound(Solver):
+    def __init__(self, optimization_type: OPTIMIZATION, init_type: INIT) -> None:
+        super().__init__(optimization_type)
         self.init_type = init_type
         self.queue: PriorityQueue[
             PrioritizedItem
         ] = PriorityQueue()  # lower priority first
-
-        self.best_solution = None
 
     def optimize(self, problem: Problem) -> Optional[Solution]:
         self._init_best_solution(problem)
@@ -66,14 +84,7 @@ class BranchAndBound:
             solution: Solution = self.queue.get().item
 
             if solution.is_final:
-                if self.best_solution is None:
-                    self.best_solution = solution
-                elif self.optimization_type == 'max':
-                    if self.best_solution < solution:
-                        self.best_solution = solution
-                else:
-                    if self.best_solution > solution:
-                        self.best_solution = solution
+                self._update_best_solution(solution)
             else:
                 subsolutions = problem.expand(solution)
                 for new_solution in self._prune(subsolutions):
@@ -108,3 +119,23 @@ class BranchAndBound:
         f_solutions = filter(f, solutions)
 
         return list(f_solutions)
+
+
+class BruteForce(Solver):
+    def __init__(self) -> None:
+        self.queue = []
+        self.best_solution = None
+
+    def optimize(self, problem: Problem) -> Optional[Solution]:
+        self.queue = problem.expand()
+
+        while self.queue:
+            solution = self.queue.pop()
+
+            if solution.is_final:
+                self._update_best_solution(solution)
+            else:
+                new_solutions = problem.expand(solution)
+                self.queue.extend(new_solutions)
+
+        return self.best_solution
