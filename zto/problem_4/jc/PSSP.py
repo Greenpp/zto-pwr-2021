@@ -1,7 +1,7 @@
 from typing import Optional
 
 from ...RNG import RandomNumberGenerator
-from .bandb import Problem, Solution
+from .solvers import Problem, Solution
 
 
 class PSSPProblem(Problem):
