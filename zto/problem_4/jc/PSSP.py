@@ -14,7 +14,7 @@ class PSSPProblem(Problem):
             [rng.nextInt(1, 99) for _ in range(machines)] for _ in range(tasks)
         ]
 
-    def expand(self, solution: Optional['PSSPSolution']) -> list['PSSPSolution']:
+    def expand(self, solution: Optional['PSSPSolution'] = None) -> list['PSSPSolution']:
         if solution is None:
             tasks_left = [i for i in range(self.tasks)]
             sequence = []
