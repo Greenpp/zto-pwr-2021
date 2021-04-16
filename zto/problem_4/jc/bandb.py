@@ -64,7 +64,9 @@ class BranchAndBound:
             solution: Solution = self.queue.get().item
 
             if solution.is_final:
-                if self.optimization_type == 'max':
+                if self.best_solution is None:
+                    self.best_solution = solution
+                elif self.optimization_type == 'max':
                     if self.best_solution < solution:
                         self.best_solution = solution
                 else:
