@@ -48,11 +48,14 @@ class PSSPProblem(Problem):
         return new_solutions
 
     def get_rand_solution(self) -> Solution:
-        sequence = [i for i in range(self.tasks)]
+        sequence = list(range(self.tasks))
         shuffle(sequence)
 
-        # TODO
-        solution = PSSPSolution(sequence, [], [], 0)
+        solution = PSSPSolution([], [], [0 for _ in range(self.machines)], 0)
+        for task in sequence:
+            solution.tasks_left.append(task)
+            solution = self.expand(solution)[0]
+
         return solution
 
     def get_greedy_solution(self) -> Solution:
