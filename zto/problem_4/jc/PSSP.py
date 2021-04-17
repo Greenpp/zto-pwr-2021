@@ -1,3 +1,4 @@
+from random import shuffle
 from typing import Optional
 
 from ...RNG import RandomNumberGenerator
@@ -26,8 +27,8 @@ class PSSPProblem(Problem):
 
         new_solutions = []
         for task in tasks_left:
-            new_machines_left = tasks_left.copy()
-            new_machines_left.remove(task)
+            new_tasks_left = tasks_left.copy()
+            new_tasks_left.remove(task)
 
             new_sequence = sequence.copy()
             new_sequence.append(task)
@@ -35,22 +36,32 @@ class PSSPProblem(Problem):
             new_time = time.copy()
             prev_machine_time = 0
             for machine, t in enumerate(new_time):
-                new_time[machine] += (
-                    max(prev_machine_time, t) + self.cost[task][machine]
-                )
+                new_time[machine] = max(prev_machine_time, t) + self.cost[task][machine]
                 prev_machine_time = new_time[machine]
+            estimated_cost = sum([self.cost[t][-1] for t in new_tasks_left])
 
-            new_solution = PSSPSolution(new_sequence, new_machines_left, new_time)
+            new_solution = PSSPSolution(
+                new_sequence, new_tasks_left, new_time, estimated_cost
+            )
             new_solutions.append(new_solution)
 
+        return new_solutions
+
     def get_rand_solution(self) -> Solution:
-        pass
+        sequence = [i for i in range(self.tasks)]
+        shuffle(sequence)
+
+        # TODO
+        solution = PSSPSolution(sequence, [], [], 0)
+        return solution
 
     def get_greedy_solution(self) -> Solution:
-        pass
+        # TODO
+        return PSSPSolution([], [], [], 0)
 
     def get_dfs_solution(self) -> Solution:
-        pass
+        # TODO
+        return PSSPSolution([], [], [], 0)
 
 
 class PSSPSolution(Solution):
@@ -59,9 +70,14 @@ class PSSPSolution(Solution):
         task_sequence: list[int],
         tasks_left: list[int],
         work_time: list[int],
+        estimated_cost: int,
     ) -> None:
-        super().__init__(work_time[-1], is_final=not tasks_left)
+        super().__init__(work_time[-1] + estimated_cost, is_final=not tasks_left)
 
         self.tasks_sequence = task_sequence
         self.tasks_left = tasks_left
         self.work_time = work_time
+
+    def visualize(self) -> None:
+        print(f'Task sequence: {self.tasks_sequence}')
+        print(f'Final time: {self.work_time[-1]}')
