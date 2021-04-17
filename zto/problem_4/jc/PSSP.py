@@ -59,8 +59,16 @@ class PSSPProblem(Problem):
         return solution
 
     def get_greedy_solution(self) -> Solution:
-        # TODO
-        return PSSPSolution([], [], [], 0)
+        solutions = self.expand()
+        solutions.sort(key=lambda s: s.value)
+        solution = solutions[0]
+
+        while not solution.is_final:
+            solutions = self.expand(solution)
+            solutions.sort(key=lambda s: s.value)
+            solution = solutions[0]
+
+        return solution
 
     def get_dfs_solution(self) -> Solution:
         sequence = list(range(self.tasks))
