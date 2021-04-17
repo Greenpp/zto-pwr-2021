@@ -26,6 +26,10 @@ class Solution(ABC):
     def __eq__(self, other: 'Solution') -> bool:
         return self.value == other.value
 
+    @abstractmethod
+    def visualize(self) -> None:
+        pass
+
 
 class Problem(ABC):
     @abstractmethod
