@@ -70,19 +70,20 @@ class Solver(ABC):
 
 
 class BranchAndBound(Solver):
-    def __init__(self, optimization_type: OPTIMIZATION, init_type: INIT) -> None:
+    def __init__(
+        self, optimization_type: OPTIMIZATION, init_type: INIT, enqueue_limit: int = -1
+    ) -> None:
         super().__init__(optimization_type)
         self.init_type = init_type
         self.queue: PriorityQueue[
             PrioritizedItem
         ] = PriorityQueue()  # lower priority first
+        self.enqueue_limit = enqueue_limit
 
     def optimize(self, problem: Problem) -> Optional[Solution]:
         self._init_best_solution(problem)
 
-        solutions = problem.expand()
-        for solution in self._prune(solutions):
-            self._enqueue_solution(solution)
+        self._develop_solution(problem)
 
         while not self.queue.empty():
             solution: Solution = self.queue.get().item
@@ -90,11 +91,25 @@ class BranchAndBound(Solver):
             if solution.is_final:
                 self._update_best_solution(solution)
             else:
-                subsolutions = problem.expand(solution)
-                for new_solution in self._prune(subsolutions):
-                    self._enqueue_solution(new_solution)
+                self._develop_solution(problem, solution)
 
         return self.best_solution
+
+    def _develop_solution(
+        self, problem: Problem, solution: Optional[Solution] = None
+    ) -> None:
+        new_solutions = problem.expand(solution)
+        pruned_solutions = self._prune(new_solutions)
+
+        if self.enqueue_limit > 0:
+            pruned_solutions = list(pruned_solutions)
+            pruned_solutions.sort(
+                key=lambda s: s.value, reverse=self.optimization_type == 'max'
+            )
+            pruned_solutions = pruned_solutions[: self.enqueue_limit]
+
+        for s in pruned_solutions:
+            self._enqueue_solution(s)
 
     def _enqueue_solution(self, solution: Solution) -> None:
         priority = (
