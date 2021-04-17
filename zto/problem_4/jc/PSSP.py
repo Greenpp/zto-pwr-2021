@@ -63,8 +63,14 @@ class PSSPProblem(Problem):
         return PSSPSolution([], [], [], 0)
 
     def get_dfs_solution(self) -> Solution:
-        # TODO
-        return PSSPSolution([], [], [], 0)
+        sequence = list(range(self.tasks))
+
+        solution = PSSPSolution([], [], [0 for _ in range(self.machines)], 0)
+        for task in sequence:
+            solution.tasks_left.append(task)
+            solution = self.expand(solution)[0]
+
+        return solution
 
 
 class PSSPSolution(Solution):
