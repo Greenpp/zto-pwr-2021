@@ -1,4 +1,4 @@
-from random import shuffle
+from random import seed, shuffle
 from typing import Optional
 
 from ...RNG import RandomNumberGenerator
@@ -10,6 +10,7 @@ class PSSPProblem(Problem):
         self.tasks = tasks
         self.machines = machines
 
+        seed(rng_seed)
         rng = RandomNumberGenerator(rng_seed)
         self.cost = [
             [rng.nextInt(1, 99) for _ in range(machines)] for _ in range(tasks)
