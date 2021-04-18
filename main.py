@@ -1,23 +1,14 @@
 # %%
-from timeit import default_timer
-
 from zto.problem_4.jc import PSSP, solvers
 
 # %%
-bandb = solvers.BranchAndBound('min', 'none')
+bandb = solvers.BranchAndBound('min', 'dfs')
 bf = solvers.BruteForce('min')
-problem = PSSP.PSSPProblem(9, 6)
+problem = PSSP.PSSPProblem(8, 4)
 
-bbtime = default_timer()
-s1 = bandb.optimize(problem)
-print(f'B&B: {default_timer() - bbtime}')
+bandb.solve(problem)
+bf.solve(problem)
 
-bftime = default_timer()
-s2 = bf.optimize(problem)
-print(f'BF: {default_timer() - bftime}')
-
-# %%
-s1.visualize()
-# %%
-s2.visualize()
+bandb.report()
+bf.report()
 # %%
