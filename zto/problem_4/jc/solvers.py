@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import total_ordering
 from queue import PriorityQueue
+from timeit import default_timer
 from typing import Any, Literal, Optional
 
 OPTIMIZATION = Literal['min', 'max']
@@ -53,9 +54,29 @@ class Solver(ABC):
     def __init__(self, optimization_type: OPTIMIZATION) -> None:
         self.optimization_type = optimization_type
         self.best_solution = None
+        self.solution_time = -1.0
+
+    def solve(self, problem: Problem) -> Optional[Solution]:
+        time_start = default_timer()
+        solution = self._optimize(problem)
+        time_end = default_timer()
+
+        self.solution_time = time_end - time_start
+
+        return solution
+
+    def report(self) -> None:
+        separator_length = 50
+        if self.solution_time > 0:
+            print(separator_length * '=')
+            print(f'Problem solved in {self.solution_time:.3f} seconds')
+            print(separator_length * '-')
+            print('Best found solution:')
+            self.best_solution.visualize()
+            print(separator_length * '=')
 
     @abstractmethod
-    def optimize(self, problem: Problem) -> Optional[Solution]:
+    def _optimize(self, problem: Problem) -> Optional[Solution]:
         pass
 
     def _update_best_solution(self, solution: Solution) -> None:
@@ -80,7 +101,7 @@ class BranchAndBound(Solver):
         ] = PriorityQueue()  # lower priority first
         self.enqueue_limit = enqueue_limit
 
-    def optimize(self, problem: Problem) -> Optional[Solution]:
+    def _optimize(self, problem: Problem) -> Optional[Solution]:
         self._init_best_solution(problem)
 
         self._develop_solution(problem)
@@ -145,7 +166,7 @@ class BruteForce(Solver):
         super().__init__(optimization_type)
         self.queue = []
 
-    def optimize(self, problem: Problem) -> Optional[Solution]:
+    def _optimize(self, problem: Problem) -> Optional[Solution]:
         self.queue = problem.expand()
 
         while self.queue:
