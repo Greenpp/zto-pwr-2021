@@ -9,8 +9,8 @@ def run_lab():
         method='bb',
         init_typ='none',
         enqueue_limit=-1,
-        tasks=10,
-        machines=10,
+        tasks=9,
+        machines=9,
     )
 
     e1 = Experiment(
@@ -23,7 +23,7 @@ def run_lab():
     e2 = Experiment(
         name='bb_enq_lim',
         var_name='enqueue_limit',
-        var_values=list(range(1, 11)),
+        var_values=list(range(1, 10)),
     )
     lab.add_experiment(e2)
 
