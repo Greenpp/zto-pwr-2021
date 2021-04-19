@@ -1,14 +1,7 @@
 # %%
-from zto.problem_4.jc import PSSP, solvers
+from zto.problem_4.jc.analysis import report
 
 # %%
-bandb = solvers.BranchAndBound('min', 'dfs')
-bf = solvers.BruteForce('min')
-problem = PSSP.PSSPProblem(8, 4)
+report()
 
-bandb.solve(problem)
-bf.solve(problem)
-
-bandb.report()
-bf.report()
 # %%
