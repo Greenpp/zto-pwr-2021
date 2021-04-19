@@ -12,10 +12,11 @@ SEEDS = [81178, 34091, 75746, 65927, 1173, 70912, 19419, 50363, 82748, 4511]
 
 
 class Experiment:
-    def __init__(self, var_name: str, var_values: list, **cont_args) -> None:
+    def __init__(self, name: str, var_name: str, var_values: list, **cont_args) -> None:
         self.var_name = var_name
         self.var_values = var_values
         self.const_args = cont_args
+        self.name = name
 
     def construct_args(self) -> Iterator[dict]:
         for v in self.var_values:
@@ -31,7 +32,7 @@ class Lab:
         name: str,
         env_cls: type,
         repetitions: int = 10,
-        results_dir_path: str = './res',
+        results_dir_path: str = './results',
         **const_args,
     ) -> None:
         self.env_cls = env_cls
@@ -78,7 +79,7 @@ class Lab:
                         self._add_result(e, seed)
                         exp_r += 1
             print('\rDone')
-            self._save_results()
+            self._save_results(e.name)
 
     def _add_result(self, e: Experiment, seed: int) -> None:
         self.results['var_name'].append(e.var_name)
@@ -87,9 +88,8 @@ class Lab:
         self.results['result'].append(self.env.solver.best_solution.value)
         self.results['seed'].append(seed)
 
-    def _save_results(self) -> None:
-        var_name = self.results['var_name'][0]
-        f_name = f'{self.name}_{var_name}.pkl'
+    def _save_results(self, name: str) -> None:
+        f_name = f'{self.name}_{name}.pkl'
 
         f_path = self.results_dir / f_name
         with open(f_path, 'wb') as f:
