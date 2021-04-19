@@ -7,7 +7,7 @@ def run_lab():
         name='p4',
         env_cls=P4Environment,
         method='bb',
-        init_typ='none',
+        init_type='none',
         enqueue_limit=-1,
         tasks=9,
         machines=9,
@@ -33,5 +33,13 @@ def run_lab():
         var_values=['bf'],
     )
     lab.add_experiment(e3)
+
+    e4 = Experiment(
+        name='bb_enq_lim_init',
+        var_name='enqueue_limit',
+        var_values=list(range(1, 10)),
+        init_type='greedy',
+    )
+    lab.add_experiment(e4)
 
     lab.run()
