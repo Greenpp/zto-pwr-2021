@@ -1,4 +1,5 @@
 import pickle as pkl
+from os import name
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -48,6 +49,13 @@ def run_lab():
     )
     lab.add_experiment(e4)
 
+    e5 = Experiment(
+        name='bb_tasks_num',
+        var_name='tasks',
+        var_values=[2, 3, 4, 5, 6, 7, 8, 9],
+    )
+    lab.add_experiment(e5)
+
     lab.run()
 
 
@@ -57,6 +65,7 @@ def report() -> None:
         './results/p4_bb_enq_lim_init.pkl',
         './results/p4_bb_init_type.pkl',
         './results/p4_bf.pkl',
+        './results/p4_bb_tasks_num.pkl',
     ]
 
     data = []
@@ -84,19 +93,25 @@ def report() -> None:
         dfs[0][['var_val', 'result']]
         .groupby(['var_val', 'result'], as_index=False)
         .last()
-        .rename(columns={'var_val': 'wartość', 'result': 'błąd'})
+        .rename(columns={'var_val': 'wartość', 'result': 'błąd [%]'})
         .set_index('wartość')
     )
-    error0 -= error0.iloc[-1].values
+    r_val = error0.iloc[-1].values
+    error0 -= r_val
+    error0 /= r_val
+    error0 *= 100
 
     error1 = (
         dfs[1][['var_val', 'result']]
         .groupby(['var_val', 'result'], as_index=False)
         .last()
-        .rename(columns={'var_val': 'wartość', 'result': 'błąd'})
+        .rename(columns={'var_val': 'wartość', 'result': 'błąd [%]'})
         .set_index('wartość')
     )
-    error1 -= error1.iloc[-1].values
+    r_val = error1.iloc[-1].values
+    error1 -= r_val
+    error1 /= r_val
+    error1 *= 100
 
     td, tm = _get_time_data(dfs[0])
     _plot_data(
@@ -107,7 +122,7 @@ def report() -> None:
     )
     _print_table(tm.round(4), floatfmt='.4f')
     _plot_error(error0)
-    _print_table(error0)
+    _print_table(error0.round(2), floatfmt='.2f')
 
     td, tm = _get_time_data(dfs[1])
     _plot_data(
@@ -118,7 +133,7 @@ def report() -> None:
     )
     _print_table(tm.round(4), floatfmt='.4f')
     _plot_error(error1)
-    _print_table(error1)
+    _print_table(error1.round(2), floatfmt='.2f')
 
     td, tm = _get_time_data(dfs[2])
     _plot_data(
@@ -138,6 +153,15 @@ def report() -> None:
     )
     _print_table(tm)
 
+    td, tm = _get_time_data(dfs[4])
+    _plot_data(
+        td,
+        'Wpływ wielkości problemu na szybkość optymalizacji',
+        'Wielkość',
+        'Czas [s]',
+    )
+    _print_table(tm.round(6), floatfmt='.6f')
+
 
 def _get_time_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     seed_mean = df.groupby(['var_name', 'var_val', 'seed']).mean().reset_index()
@@ -148,7 +172,7 @@ def _get_time_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         .mean()
         .rename(
             columns={
-                'time': 'średni czas',
+                'time': 'średni czas [s]',
             },
         )
         .rename_axis('wartość')
@@ -171,7 +195,7 @@ def _plot_error(data: pd.DataFrame) -> None:
     data.plot(kind='bar', legend=False)
     plt.title('Wielkość błędu w zależności od limitu kolejkowania')
     plt.xlabel('Limit kolejkowania')
-    plt.ylabel('Błąd')
+    plt.ylabel('Błąd [%]')
     plt.gcf().set_size_inches(12, 8)
     plt.show()
 
