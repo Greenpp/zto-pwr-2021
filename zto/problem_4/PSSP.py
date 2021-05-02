@@ -1,7 +1,7 @@
 from random import seed, shuffle
 from typing import Optional
 
-from ...RNG import RandomNumberGenerator
+from ..RNG import RandomNumberGenerator
 from .solvers import Problem, Solution
 
 
