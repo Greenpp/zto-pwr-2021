@@ -6,14 +6,17 @@ from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from .QAP import QAPProblem, QAPSolution
 
+INIT_LITERAL = Literal['rnd', 'best', 'greedy']
+UPDATE_LITERAL = Literal['geo', 'lin']
+
 
 class RandomSolver:
     def __init__(
         self,
-        initialization: Literal['rnd', 'best', 'greedy'] = 'rnd',
+        initialization: INIT_LITERAL = 'rnd',
         iteration_limit: int = 100,
         annealing: bool = False,
-        temperature_update: Literal['geo', 'lin'] = 'geo',
+        temperature_update: UPDATE_LITERAL = 'geo',
         temperature_change: float = 0.9,
     ) -> None:
         self.initialization = initialization
