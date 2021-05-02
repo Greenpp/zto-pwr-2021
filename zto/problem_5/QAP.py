@@ -14,6 +14,7 @@ class QAPSolution:
         print('Fac : Loc')
         for i, a in enumerate(self.order):
             print(f'{i:3} : {a:3}')
+        print(f'Cost: {self.cost}')
 
     def __gt__(self, other: 'QAPSolution') -> bool:
         return self.cost > other.cost
