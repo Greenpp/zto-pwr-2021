@@ -1,14 +1,9 @@
-# %%
 import pickle as pkl
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
     from .environment import Environment
-
-# %%
-
-SEEDS = [81178, 34091, 75746, 65927, 1173, 70912, 19419, 50363, 82748, 4511]
 
 
 class Experiment:
@@ -31,11 +26,13 @@ class Lab:
         self,
         name: str,
         env_cls: type,
+        seeds: list[int],
         repetitions: int = 10,
         results_dir_path: str = './results',
         **const_args,
     ) -> None:
         self.env_cls = env_cls
+        self.seeds = seeds
         self.experiments: list[Experiment] = []
         self.repetitions = repetitions
         self.const_args = const_args
@@ -44,7 +41,7 @@ class Lab:
         self.results_dir = Path(results_dir_path)
         self.results_dir.mkdir(exist_ok=True)
 
-        self.experiment_runs = self.repetitions * len(SEEDS)
+        self.experiment_runs = self.repetitions * len(self.seeds)
 
     def _reset_environment(self, **kwargs) -> None:
         self.env: Environment = self.env_cls(**kwargs)
@@ -65,7 +62,7 @@ class Lab:
                 'seed': [],
             }
             for args in e.construct_args():
-                for seed in SEEDS:
+                for seed in self.seeds:
                     seed_arg = {'seed': seed}
                     for _ in range(self.repetitions):
                         print(

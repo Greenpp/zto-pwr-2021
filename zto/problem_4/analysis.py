@@ -1,5 +1,4 @@
 import pickle as pkl
-from os import name
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,11 +7,14 @@ from tabulate import tabulate
 from .environment import P4Environment
 from .experiment import Experiment, Lab
 
+SEEDS = [81178, 34091, 75746, 65927, 1173, 70912, 19419, 50363, 82748, 4511]
+
 
 def run_lab():
     lab = Lab(
         name='p4',
         env_cls=P4Environment,
+        seeds=SEEDS,
         method='bb',
         init_type='none',
         enqueue_limit=-1,
