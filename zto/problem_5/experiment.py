@@ -58,7 +58,7 @@ class Lab:
                 'var_name': [],
                 'var_val': [],
                 'time': [],
-                'result': [],
+                'results': [],
                 'seed': [],
             }
             for args in e.construct_args():
@@ -82,9 +82,8 @@ class Lab:
         self.results['var_name'].append(e.var_name)
         self.results['var_val'].append(e.var_value)
         self.results['time'].append(self.env.solver.solution_time)
-        self.results['result'].append(self.env.solver.best_solution.cost)
+        self.results['results'].append([s.cost for s in self.env.solver.best_history])
         self.results['seed'].append(seed)
-        # TODO save all best results
 
     def _save_results(self, name: str) -> None:
         f_name = f'{self.name}_{name}.pkl'
