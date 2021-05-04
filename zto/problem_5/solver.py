@@ -35,10 +35,6 @@ class RandomSolver:
         else:
             iteration_limit = True
 
-        # TODO
-        # - local minimum
-        # - timeout
-
         return iteration_limit
 
     def _init_temperature(self, problem: 'QAPProblem') -> None:
@@ -72,13 +68,12 @@ class RandomSolver:
             init_solution = min(solutions, key=lambda s: s.cost)
             self._set_new_best_solution(init_solution)
         elif self.initialization == 'greedy':
-            # TODO
-            # - greedy
-            pass
+            solution = problem.get_greedy_solution()
+            self._set_new_best_solution(solution)
 
         self.current_solution = self.best_solution
 
-    def _set_new_best_solution(self, new_best: QAPSolution) -> None:
+    def _set_new_best_solution(self, new_best: 'QAPSolution') -> None:
         self.best_history.append(new_best)
         self.best_solution = new_best
 

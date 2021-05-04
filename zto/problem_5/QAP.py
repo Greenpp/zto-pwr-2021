@@ -56,3 +56,30 @@ class QAPProblem:
                 total_cost += self.w[fi][fj] * self.d[pi][pj]
 
         return total_cost
+
+    def _get_all_neighbours(self, solution: QAPSolution) -> list[QAPSolution]:
+        neighbours = []
+        for i in range(self.size - 1):
+            for j in range(i + 1, self.size):
+                order = solution.order.copy()
+                order[i], order[j] = order[j], order[i]
+
+                cost = self._evaluate_order(order)
+                new_solution = QAPSolution(order, cost)
+                neighbours.append(new_solution)
+
+        return neighbours
+
+    def get_greedy_solution(self) -> QAPSolution:
+        solution = self.get_random_solution()
+
+        while True:
+            nb = self._get_all_neighbours(solution)
+            best = min(nb, key=lambda s: s.cost)
+
+            if best < solution:
+                solution = best
+            else:
+                break
+
+        return solution
