@@ -46,11 +46,15 @@ class RandomSolver:
 
         self.temperature = p_range
 
+    def _clamp(self, val: float) -> float:
+        return max(-50, min(50, val))
+
     def _accept(self, solution: 'QAPSolution') -> bool:
         last_val = self.current_solution.cost
         new_val = solution.cost
 
-        threshold = math.e ** (-(new_val - last_val) / self.temperature)
+        exponent = -(new_val - last_val) / self.temperature
+        threshold = math.e ** self._clamp(exponent)
         return random.random() < threshold
 
     def _update_temperature(self) -> None:
