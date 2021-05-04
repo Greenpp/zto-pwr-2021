@@ -1,4 +1,4 @@
-from random import seed
+import random
 
 from zto.problem_5.QAP import QAPProblem
 
@@ -14,10 +14,10 @@ class Environment:
         annealing: bool,
         temperature_update: UPDATE_LITERAL,
         temperature_change: float,
-        rnd_seed: int,
+        seed: int,
         problem_seed: int,
     ) -> None:
-        seed(rnd_seed)
+        random.seed(seed)
 
         self.problem = QAPProblem(problem_size, problem_seed)
         self.solver = RandomSolver(
