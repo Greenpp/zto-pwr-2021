@@ -96,6 +96,10 @@ def report():
     _plot_results(r2, 'Inicjalizacja dla przeszukania losowego')
     _show_final_results(r2)
 
+    r4 = _process_results(dfs[4])
+    _plot_results(r4, 'Inicjalizacja dla wyżarzania')
+    _show_final_results(r4)
+
     r3 = _process_results(dfs[3])
     r3 = r3.append(r0b).append(r1b)
 
@@ -103,10 +107,6 @@ def report():
 
     _plot_results(r3, 'Porównanie wyżarzania z przeszukaniem losowym')
     _show_final_results(r3)
-
-    r4 = _process_results(dfs[4])
-    _plot_results(r4, 'Inicjalizacja dla wyżarzania')
-    _show_final_results(r4)
 
 
 def _list_mean_agg(series):
@@ -145,6 +145,6 @@ def _plot_results(df: pd.DataFrame, title: str, legend: bool = True) -> None:
             plt.plot(y, label=l)
     if legend:
         plt.legend()
-    plt.gcf().set_size_inches(12, 8)
+    plt.gcf().set_size_inches(10, 6)
     plt.title(title)
     plt.show()
