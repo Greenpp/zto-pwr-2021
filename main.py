@@ -1,21 +1,13 @@
 # %%
-from random import seed
+from zto.problem_6.ABC import ABCSolver
+from zto.problem_6.DKP import DKProblem
 
-from zto.problem_5.QAP import QAPProblem
-from zto.problem_5.solver import RandomSolver
+s = ABCSolver(5, 5)
+p = DKProblem(25)
 
-p = QAPProblem(25)
-seed(42)
-solver = RandomSolver(
-    annealing=True,
-    iteration_limit=100,
-    initialization='rnd',
-)
-s = solver.solve(p)
-s.visualize()
-# %%
-from zto.problem_5.analysis import report
+p.visualize()
 
-report()
+sol = s.solve(p)
+sol.visualize()
 
 # %%
