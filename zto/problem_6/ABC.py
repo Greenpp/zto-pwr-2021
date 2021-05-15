@@ -52,7 +52,6 @@ class ABCSolver:
         while not self.should_stop():
             self.iteration += 1
             self.no_progress = +1
-            print(f'Iteration: {self.iteration}')
             # Zbieracze
             for s in solutions:
                 self.try_solution_neighbor(problem, s)
