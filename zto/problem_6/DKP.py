@@ -93,6 +93,17 @@ class DKProblem:
 
         return solution
 
+    def visualize(self) -> None:
+        print(40 * '=')
+        print('Discrete Knapsack Problem')
+        print(40 * '=')
+        print(f'Bag size: {self.b}')
+        print(32 * '-')
+        print(f'{"Item":10} {"Value":10} {"Weight":10}')
+        print(32 * '-')
+        for i in range(self.items):
+            print(f'{i:10} {self.c[i]:10} {self.w[i]:10}')
+
 
 @total_ordering
 class DKSolution:
@@ -113,3 +124,13 @@ class DKSolution:
             return False
         else:
             return self.weight < other.weight
+
+    def visualize(self) -> None:
+        print(40 * '=')
+        print('Solution')
+        print(40 * '=')
+        print(f'Total value:  {self.value:10}')
+        print(f'Total weight: {self.weight:10}')
+        print(40 * '-')
+        print('Selected items:')
+        print(self.selected)
