@@ -23,7 +23,7 @@ class PSOSolver:
         self.no_progress_limit = no_progress_limit
 
     def update_best_solution(self, solution: SphereSolution) -> None:
-        if solution > self.best_solution:
+        if solution < self.best_solution:
             self.best_solution = solution
             self.no_progress = 0
 
@@ -105,7 +105,7 @@ class PSOSolution:
         new_solution = SphereSolution(new_values, new_value)
 
         self.solution = new_solution
-        if new_solution > self.best_local:
+        if new_solution < self.best_local:
             self.best_local = new_solution
 
         return new_solution
