@@ -26,6 +26,12 @@ class SphereProblem:
 
         return value
 
+    def visualize(self) -> None:
+        print(40 * '=')
+        print('Sphere function')
+        print(40 * '=')
+        print(f'Variables: {self.vars}')
+
 
 @total_ordering
 class SphereSolution:
@@ -35,3 +41,10 @@ class SphereSolution:
 
     def __gt__(self, other: 'SphereSolution') -> bool:
         return self.value > other.value
+
+    def visualize(self) -> None:
+        print(40 * '=')
+        print('Solution')
+        print(40 * '=')
+        print(f'Result: {self.value}')
+        print(f'Values: {self.values}')
