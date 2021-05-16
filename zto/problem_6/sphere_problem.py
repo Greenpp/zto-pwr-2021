@@ -4,11 +4,18 @@ import numpy as np
 
 
 class SphereProblem:
-    def __init__(self, vars: int) -> None:
+    def __init__(
+        self, vars: int, upper_bound: float = 100, lowe_bound: float = -100
+    ) -> None:
         self.vars = vars
+        self.upper_bound = upper_bound
+        self.lower_bound = lowe_bound
 
     def get_random_solution(self) -> 'SphereSolution':
-        values = np.random.random(self.vars) * 200 - 100
+        values = (
+            np.random.random(self.vars) * (self.upper_bound - self.lower_bound)
+            + self.lower_bound
+        )
         value = self.evaluate_values(values)
 
         solution = SphereSolution(values, value)
