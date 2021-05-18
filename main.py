@@ -1,9 +1,12 @@
 # %%
 from zto.problem_6.ABC import ABCSolver
 from zto.problem_6.DKP import DKProblem
+from random import seed
+
+seed(42)
 
 s = ABCSolver(5, 5)
-p = DKProblem(25)
+p = DKProblem(50, 'gen')
 
 p.visualize()
 

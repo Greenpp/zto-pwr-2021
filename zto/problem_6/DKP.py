@@ -1,13 +1,19 @@
 import random
 from functools import total_ordering
+from typing import Literal
+
+import numpy as np
 
 from ..RNG import RandomNumberGenerator as RNG
 
+NB_TYPE = Literal['nb', 'gen']
+
 
 class DKProblem:
-    def __init__(self, items: int, rnd_seed: int = 42) -> None:
+    def __init__(self, items: int, nb_type: NB_TYPE = 'nb', rnd_seed: int = 42) -> None:
         self.rgen = RNG(rnd_seed)
         self.items = items
+        self.nb_type = nb_type
 
         # Wartość
         self.c = [self.rgen.nextInt(1, 30) for _ in range(items)]
@@ -64,6 +70,48 @@ class DKProblem:
 
         return nb_solutions
 
+    def get_next_random(self, solution: 'DKSolution') -> 'DKSolution':
+        if self.nb_type == 'nb':
+            return self.get_random_neighbor(solution)
+        else:
+            return self.get_random_gen_neighbour(solution)
+
+    def get_random_gen_neighbour(self, solution: 'DKSolution') -> 'DKSolution':
+        s2 = self.get_random_solution()
+        while solution == s2:
+            s2 = self.get_random_solution()
+
+        gen1 = self._selected_to_bin(solution.selected)
+        gen2 = self._selected_to_bin(s2.selected)
+
+        ngen = self._combine_bin(gen1, gen2)
+
+        new_selected = self._bin_to_selected(ngen)
+        new_solution = self.selected_to_solution(new_selected)
+
+        return new_solution
+
+    def _combine_bin(self, g1: np.ndarray, g2: np.ndarray) -> np.ndarray:
+        cut = self.items // 2
+
+        ng1 = g1[:cut]
+        ng2 = g2[cut:]
+
+        ng = np.concatenate([ng1, ng2])
+        return ng
+
+    def _selected_to_bin(self, selected: set[int]) -> np.ndarray:
+        bin = np.zeros(self.items)
+        selected_idx = np.array(list(selected))
+
+        bin[selected_idx] = 1
+        return bin
+
+    def _bin_to_selected(self, bin: np.ndarray) -> set[int]:
+        selected = set(np.where(bin == 1)[0])
+
+        return selected
+
     def get_random_neighbor(self, solution: 'DKSolution') -> 'DKSolution':
         not_selected = self.get_not_selected(solution.selected)
 
@@ -114,6 +162,9 @@ class DKSolution:
         self.value = value
         self.weight = weight
         self.in_bounds = in_bounds
+
+    def __eq__(self, other: 'DKSolution') -> bool:
+        return self.selected == other.selected
 
     def __gt__(self, other: 'DKSolution') -> bool:
         if self.in_bounds and other.in_bounds:

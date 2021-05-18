@@ -30,7 +30,7 @@ class ABCSolver:
     def try_solution_neighbor(
         self, problem: DKProblem, solution: 'ABCSolution'
     ) -> None:
-        nb_solution = problem.get_random_neighbor(solution.solution)
+        nb_solution = problem.get_next_random(solution.solution)
         if nb_solution > solution.solution:
             solution.replace_solution(nb_solution)
             self.no_progress = 0
