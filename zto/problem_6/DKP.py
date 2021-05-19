@@ -23,19 +23,23 @@ class DKProblem:
         self.b = self.rgen.nextInt(5 * items, 10 * items)
 
     def evaluate_selection_value(self, selected: set[int]) -> int:
+        # Wartość wybranych przedmiotów
         value = sum([self.c[idx] for idx in selected])
 
         return value
 
     def evaluate_selection_weight(self, selected: set[int]) -> int:
+        # Waga wybranych przedmiotów
         weight = sum([self.w[idx] for idx in selected])
 
         return weight
 
     def is_in_bounds(self, weight: int) -> bool:
+        # Czy mieści się w torbie
         return weight <= self.b
 
     def selected_to_solution(self, selected: set[int]) -> 'DKSolution':
+        # Tworzy rozwiązanie z ciągu wybranych przedmiotów
         value = self.evaluate_selection_value(selected)
         weight = self.evaluate_selection_weight(selected)
         in_bounds = self.is_in_bounds(weight)
@@ -45,11 +49,13 @@ class DKProblem:
         return new_solution
 
     def get_not_selected(self, selected: set[int]) -> list[int]:
+        # Odwrotność zbioru wybranych przedmiotów
         not_selected = list(filter(lambda it: it not in selected, range(self.items)))
 
         return not_selected
 
     def get_full_neighborhood(self, solution: 'DKSolution') -> list['DKSolution']:
+        # Podaj wszystkich sąsiadów rozwiązania
         not_selected = self.get_not_selected(solution.selected)
 
         nb_solutions = []
@@ -71,12 +77,16 @@ class DKProblem:
         return nb_solutions
 
     def get_next_random(self, solution: 'DKSolution') -> 'DKSolution':
+        # Kolejny losowy element dla rozwiązania
+        # nb - sąsiad
+        # gen - połączenie z losowym (jak genetyczny)
         if self.nb_type == 'nb':
             return self.get_random_neighbor(solution)
         else:
             return self.get_random_gen_neighbour(solution)
 
     def get_random_gen_neighbour(self, solution: 'DKSolution') -> 'DKSolution':
+        # Połączenie z losowym rozwiązaniem
         s2 = self.get_random_solution()
         while solution == s2:
             s2 = self.get_random_solution()
@@ -92,6 +102,7 @@ class DKProblem:
         return new_solution
 
     def _combine_bin(self, g1: np.ndarray, g2: np.ndarray) -> np.ndarray:
+        # Połączenie rozwiązań w postaci binarnej (cięcie na pół)
         cut = self.items // 2
 
         ng1 = g1[:cut]
@@ -101,6 +112,7 @@ class DKProblem:
         return ng
 
     def _selected_to_bin(self, selected: set[int]) -> np.ndarray:
+        # Transformacja zbiór przedmiotów -> postać binarna
         bin = np.zeros(self.items)
         selected_idx = np.array(list(selected))
 
@@ -108,11 +120,13 @@ class DKProblem:
         return bin
 
     def _bin_to_selected(self, bin: np.ndarray) -> set[int]:
+        # Transformacja postać binarna -> zbiór przedmiotów
         selected = set(np.where(bin == 1)[0])
 
         return selected
 
     def get_random_neighbor(self, solution: 'DKSolution') -> 'DKSolution':
+        # Losowy sąsiad danego rozwiązania
         not_selected = self.get_not_selected(solution.selected)
 
         new_item = random.choice(not_selected)
@@ -129,6 +143,7 @@ class DKProblem:
         return new_solution
 
     def get_random_solution(self, allow_out_of_bounds: bool = False) -> 'DKSolution':
+        # Losowe rozwiązanie
         s_len = random.randint(1, self.items)
 
         selected = set(random.sample(range(self.items), s_len))
