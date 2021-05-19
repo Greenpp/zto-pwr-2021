@@ -22,7 +22,9 @@ class ABCSolver:
         # Aktualizacja najlepszego rozwiązania (w razie potrzeby)
         if solution > self.best_solution:
             self.best_solution = solution
-            self.best_history.append(solution.value)
+
+    def log_best(self) -> None:
+        self.best_history.append(self.best_solution.value)
 
     def should_stop(self) -> bool:
         # Warunek stopu
@@ -79,6 +81,8 @@ class ABCSolver:
                     s.replace_solution(new_solution)
                     self.no_progress = 0
                     self.update_best(new_solution)
+
+            self.log_best()
 
         return self.best_solution
 

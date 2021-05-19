@@ -31,3 +31,6 @@ p.visualize()
 sol = s.solve(p)
 sol.visualize()
 # %%
+from zto.problem_6.analysis import report
+
+report()
