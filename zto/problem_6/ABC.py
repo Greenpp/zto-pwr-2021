@@ -16,9 +16,12 @@ class ABCSolver:
         self.iteration_limit = iteration_limit
         self.no_progress_limit = no_progress_limit
 
+        self.best_history = []
+
     def update_best(self, solution: DKSolution) -> None:
         if solution > self.best_solution:
             self.best_solution = solution
+            self.best_history.append(solution.value)
 
     def should_stop(self) -> bool:
         if self.iteration_limit <= self.iteration:
