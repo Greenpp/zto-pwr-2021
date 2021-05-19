@@ -30,7 +30,7 @@ class PSOSolver:
     def should_stop(self) -> bool:
         if self.iteration >= self.iteration_limit:
             return True
-        if self.no_progress >= self.no_progress_limit:
+        if self.no_progress_limit > -1 and self.no_progress >= self.no_progress_limit:
             return True
         return False
 
