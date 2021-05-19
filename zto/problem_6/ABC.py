@@ -19,11 +19,13 @@ class ABCSolver:
         self.best_history = []
 
     def update_best(self, solution: DKSolution) -> None:
+        # Aktualizacja najlepszego rozwiązania (w razie potrzeby)
         if solution > self.best_solution:
             self.best_solution = solution
             self.best_history.append(solution.value)
 
     def should_stop(self) -> bool:
+        # Warunek stopu
         if self.iteration_limit <= self.iteration:
             return True
         if self.no_progress_limit > 0 and self.no_progress_limit <= self.no_progress:
@@ -33,6 +35,7 @@ class ABCSolver:
     def try_solution_neighbor(
         self, problem: DKProblem, solution: 'ABCSolution'
     ) -> None:
+        # Sprawdzenie kolejnego rozwiązania dla podanego
         nb_solution = problem.get_next_random(solution.solution)
         if nb_solution > solution.solution:
             solution.replace_solution(nb_solution)
@@ -56,10 +59,12 @@ class ABCSolver:
             self.iteration += 1
             self.no_progress = +1
             # Zbieracze
+            # Sprawdzanie kolejnych rozwiązań
             for s in solutions:
                 self.try_solution_neighbor(problem, s)
 
             # Obserwatorzy
+            # Sprawdzanie kolejnych rozwiązań z naciskiem na najlepsze
             for i in range(self.population):
                 exp_solution = random.sample(
                     solutions, 1, counts=[s.solution.value for s in solutions]
@@ -67,6 +72,7 @@ class ABCSolver:
                 self.try_solution_neighbor(problem, exp_solution)
 
             # Zwiadowcy
+            # Podmiana rozwiązań bez możliwości poprawy
             for s in solutions:
                 if s.c > self.change_limit:
                     new_solution = problem.get_random_solution()
