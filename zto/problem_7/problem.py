@@ -69,7 +69,6 @@ class FlowProblem:
         )
 
 
-@total_ordering
 class FlowSolution:
     def __init__(
         self,
@@ -132,13 +131,10 @@ class FlowSolution:
         self.evalueated = True
 
     def __gt__(self, other: 'FlowSolution') -> bool:
+        gt = False
         for c in self.criterions:
             if self.state[c] < other.state[c]:
                 return False
-        return True
-
-    # def __eq__(self, other: 'FlowSolution') -> bool:
-    #     for c in self.criterions:
-    #         if self.state[c] != other.state[c]:
-    #             return False
-    #     return True
+            if self.state[c] > other.state[c]:
+                gt = True
+        return gt
