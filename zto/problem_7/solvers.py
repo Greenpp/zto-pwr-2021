@@ -21,7 +21,7 @@ class Solver:
 
             new_solution = solution.get_nb()
             new_solution.evalueate(problem)
-            if solution > new_solution or random() < add_prob:
+            if new_solution.dominates(solution) or random() < add_prob:
                 solution = new_solution
                 selected_solutions.append(solution)
 

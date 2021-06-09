@@ -130,11 +130,11 @@ class FlowSolution:
 
         self.evalueated = True
 
-    def __gt__(self, other: 'FlowSolution') -> bool:
-        gt = False
+    def dominates(self, other: 'FlowSolution') -> bool:
+        d = False
         for c in self.criterions:
-            if self.state[c] < other.state[c]:
-                return False
             if self.state[c] > other.state[c]:
-                gt = True
-        return gt
+                return False
+            if self.state[c] < other.state[c]:
+                d = True
+        return d
