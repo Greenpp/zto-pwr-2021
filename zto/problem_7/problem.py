@@ -60,12 +60,10 @@ class FlowProblem:
         mean_max_tard = np.clip(times - mean_d, 0, None).max()
         mean_total_tard = np.clip(times - mean_d, 0, None).sum()
 
-        max_coef = max(mean_total_flow, mean_max_tard, mean_total_tard)
-
         return (
-            mean_total_flow / max_coef,
-            mean_max_tard / max_coef,
-            mean_total_tard / max_coef,
+            1 / mean_total_flow,
+            1 / mean_max_tard,
+            1 / mean_total_tard,
         )
 
 
